@@ -1,0 +1,92 @@
+var Game = require('./game.js');
+var inquirer = require("inquirer");
+var clear = require('clear');
+
+
+var currentGame;
+var currentPlayer;
+
+function Player() {
+    this.name = '';
+    this.wins = 0;
+    this.losses = 0;
+    this.numOfGames = 0;
+}
+
+var createGame = function () {
+    // Create a new game using the current word
+    currentGame = new Game();
+    // Ask the user to guess letters for the current word
+    promptPlayerGuess();
+};
+
+var createPlayer = function () {
+    currentPlayer = new Player();
+    promptPlayerGame();
+};
+
+var promptPlayerGuess = function () {
+    inquirer.prompt([
+        {
+            name: "guess",
+            message: "Guess a letter: ",
+            validate: function (value) {
+                var reg = /\D/;
+                return reg.test(value) || "Guess must be one letter!";
+            }
+            //Add validation for one letter/character
+            //Add validation if already guessed
+        }
+    ]).then(function (answers) {
+        //console.log("You guessed: " + answers.guess);
+        // Check if player guess is correct and see if they need to keep guessing
+        currentGame.isGuessCorrect(answers.guess);
+        // If player can keep guessing, call prompt for player guess again.
+        if (currentGame.status === 'continue') {
+            promptPlayerGuess()
+        }
+        else if (currentGame.status === 'win') {
+            currentPlayer.wins++;
+            currentPlayer.numOfGames++;
+            console.log(" Player Status" +
+                "\n Number of Wins: " + currentPlayer.wins +
+                "\n Number of Losses: " + currentPlayer.losses
+                + "\n");
+            promptPlayerGame();
+        }
+        else if (currentGame.status === 'gameOver') {
+            currentPlayer.numOfGames++;
+            currentPlayer.losses++;
+            console.log(" Player Status" +
+                "\n Number of Wins: " + currentPlayer.wins +
+                "\n Number of Losses: " + currentPlayer.losses
+                + "\n");
+            promptPlayerGame();
+        }
+    });
+};
+
+var promptPlayerGame = function () {
+    inquirer.prompt([
+        {
+            type: 'confirm',
+            name: "play",
+            message: "Do you want to play a game?"
+        }
+    ]).then(function (answers) {
+
+        // console.log(answers);
+        if (answers.play === true) {
+            createGame();
+        }
+        else {
+            console.log("\nLame!")
+        }
+    });
+};
+
+clear();
+
+console.log('\n');
+//console.log("-----------------------------");
+createPlayer();
