@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/elizabethtfox/constructor-word-guess#readme",
   "dependencies": {
+    "chalk": "^2.4.0",
     "clear": "^0.1.0",
+    "figlet": "^1.2.0",
     "inquirer": "^5.2.0"
   }
 }
